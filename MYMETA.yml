@@ -27,6 +27,8 @@ requires:
   Hash::Merge::Simple: 0.0
   perl: 5.010
 resources:
+  bugtracker: https://github.com/rfdrake/tel/issues
+  homepage: http://search.cpan.org/dist/App-Tel
   license: http://dev.perl.org/licenses/
   repository: git://github.com/rfdrake/tel.git
 version: 0.2002

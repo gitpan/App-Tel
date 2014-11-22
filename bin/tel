@@ -9,7 +9,7 @@ use Getopt::Std;
 use Hash::Merge::Simple qw (merge);
 use Module::Load;
 use v5.10;
-our $VERSION = eval '0.2002';
+our $VERSION = eval '0.2003';
 
 my @colors;
 my $winch_it=0;
@@ -193,7 +193,12 @@ sub send {
 }
 
 sub expect {
-    return shift->{'session'}->expect(@_);
+    my $self = shift;
+    if ($#_ < 2) {
+        return $self->{'session'}->expect($self->{'timeout'}, @_);
+    } else {
+        return $self->{'session'}->expect(@_);
+    }
 }
 
 

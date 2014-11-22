@@ -46,6 +46,10 @@
    },
    "release_status" : "stable",
    "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/rfdrake/tel/issues"
+      },
+      "homepage" : "http://search.cpan.org/dist/App-Tel",
       "license" : [
          "http://dev.perl.org/licenses/"
       ],
