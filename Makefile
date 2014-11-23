@@ -12,7 +12,7 @@
 #   MakeMaker Parameters:
 
 #     AUTHOR => [q[Robert Drake, C<< <rdrake at cpan.org> >>]]
-#     BUILD_REQUIRES => { ExtUtils::MakeMaker=>q[6.59], Test::Most=>q[0.33] }
+#     BUILD_REQUIRES => { Test::Most=>q[0.33], ExtUtils::MakeMaker=>q[6.59] }
 #     CONFIGURE_REQUIRES => {  }
 #     DISTNAME => q[App-Tel]
 #     EXE_FILES => [q[bin/tel], q[bin/mktelrc]]
@@ -20,9 +20,9 @@
 #     MIN_PERL_VERSION => q[5.010]
 #     NAME => q[App::Tel]
 #     NO_META => q[1]
-#     PREREQ_PM => { Expect=>q[0.0], Hash::Merge::Simple=>q[0.0], Test::Most=>q[0.33], ExtUtils::MakeMaker=>q[6.59] }
+#     PREREQ_PM => { IO::Stty=>q[0.0], Hash::Merge::Simple=>q[0.0], Expect=>q[0.0], ExtUtils::MakeMaker=>q[6.59], Test::Most=>q[0.33] }
 #     TEST_REQUIRES => {  }
-#     VERSION => q[0.2003]
+#     VERSION => q[0.2004]
 #     VERSION_FROM => q[bin/tel]
 #     dist => { PREOP=>q[$(PERL) -I. "-MModule::Install::Admin" -e "dist_preop(q($(DISTVNAME)))"] }
 #     realclean => { FILES=>q[MYMETA.yml] }
@@ -65,11 +65,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = App::Tel
 NAME_SYM = App_Tel
-VERSION = 0.2003
+VERSION = 0.2004
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_2003
+VERSION_SYM = 0_2004
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.2003
+XS_VERSION = 0.2004
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -271,7 +271,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = App-Tel
-DISTVNAME = App-Tel-0.2003
+DISTVNAME = App-Tel-0.2004
 
 
 # --- MakeMaker macro section:
@@ -507,7 +507,7 @@ realclean_subdirs :
 # Delete temporary files (via clean) and also delete dist files
 realclean purge ::  clean realclean_subdirs
 	- $(RM_F) \
-	  $(MAKEFILE_OLD) $(FIRST_MAKEFILE) 
+	  $(FIRST_MAKEFILE) $(MAKEFILE_OLD) 
 	- $(RM_RF) \
 	  $(DISTVNAME) MYMETA.yml 
 
@@ -820,6 +820,7 @@ ppd :
 	$(NOECHO) $(ECHO) '        <PERLCORE VERSION="5,010,0,0" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Expect::" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Hash::Merge::Simple" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="IO::Stty" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="x86_64-linux-gnu-thread-multi-5.18" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <CODEBASE HREF="" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    </IMPLEMENTATION>' >> $(DISTNAME).ppd
@@ -879,14 +880,14 @@ installdeps_notest ::
 	$(NOECHO) $(NOOP)
 
 upgradedeps ::
-	$(PERL) Makefile.PL --config= --upgradedeps=Test::Most,0.33,Hash::Merge::Simple,0.0,Expect,0.0
+	$(PERL) Makefile.PL --config= --upgradedeps=Test::Most,0.33,Hash::Merge::Simple,0.0,Expect,0.0,IO::Stty,0.0
 
 upgradedeps_notest ::
-	$(PERL) Makefile.PL --config=notest,1 --upgradedeps=Test::Most,0.33,Hash::Merge::Simple,0.0,Expect,0.0
+	$(PERL) Makefile.PL --config=notest,1 --upgradedeps=Test::Most,0.33,Hash::Merge::Simple,0.0,Expect,0.0,IO::Stty,0.0
 
 listdeps ::
 	@$(PERL) -le "print for @ARGV" 
 
 listalldeps ::
-	@$(PERL) -le "print for @ARGV" Test::Most Hash::Merge::Simple Expect
+	@$(PERL) -le "print for @ARGV" Test::Most Hash::Merge::Simple Expect IO::Stty
 
