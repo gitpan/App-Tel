@@ -1,5 +1,5 @@
 ---
-abstract: unknown
+abstract: 'A script for logging into devices'
 author:
   - 'Robert Drake, C<< <rdrake at cpan.org> >>'
 build_requires:
@@ -32,4 +32,4 @@ resources:
   homepage: http://search.cpan.org/dist/App-Tel
   license: http://dev.perl.org/licenses/
   repository: git://github.com/rfdrake/tel.git
-version: 0.2003
+version: 0.2005

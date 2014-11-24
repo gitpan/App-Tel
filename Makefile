@@ -11,8 +11,9 @@
 
 #   MakeMaker Parameters:
 
+#     ABSTRACT => q[A script for logging into devices]
 #     AUTHOR => [q[Robert Drake, C<< <rdrake at cpan.org> >>]]
-#     BUILD_REQUIRES => { Test::Most=>q[0.33], ExtUtils::MakeMaker=>q[6.59] }
+#     BUILD_REQUIRES => { ExtUtils::MakeMaker=>q[6.59], Test::Most=>q[0.33] }
 #     CONFIGURE_REQUIRES => {  }
 #     DISTNAME => q[App-Tel]
 #     EXE_FILES => [q[bin/tel], q[bin/mktelrc]]
@@ -20,10 +21,10 @@
 #     MIN_PERL_VERSION => q[5.010]
 #     NAME => q[App::Tel]
 #     NO_META => q[1]
-#     PREREQ_PM => { IO::Stty=>q[0.0], Hash::Merge::Simple=>q[0.0], Expect=>q[0.0], ExtUtils::MakeMaker=>q[6.59], Test::Most=>q[0.33] }
+#     PREREQ_PM => { Expect=>q[0.0], Hash::Merge::Simple=>q[0.0], Test::Most=>q[0.33], IO::Stty=>q[0.0], ExtUtils::MakeMaker=>q[6.59] }
 #     TEST_REQUIRES => {  }
-#     VERSION => q[0.2004]
-#     VERSION_FROM => q[bin/tel]
+#     VERSION => q[0.2005]
+#     VERSION_FROM => q[lib/App/Tel.pm]
 #     dist => { PREOP=>q[$(PERL) -I. "-MModule::Install::Admin" -e "dist_preop(q($(DISTVNAME)))"] }
 #     realclean => { FILES=>q[MYMETA.yml] }
 #     test => { TESTS=>q[t/00-load.t t/01_initial_t.t t/02-hostname.t t/02-load-telrc.t t/02-no-config.t t/03-fake-a-router.t t/10-test-colorize.t] }
@@ -65,11 +66,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = App::Tel
 NAME_SYM = App_Tel
-VERSION = 0.2004
+VERSION = 0.2005
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_2004
+VERSION_SYM = 0_2005
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.2004
+XS_VERSION = 0.2005
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -155,7 +156,7 @@ FULLEXT = App/Tel
 BASEEXT = Tel
 PARENT_NAME = App
 DLBASE = $(BASEEXT)
-VERSION_FROM = bin/tel
+VERSION_FROM = lib/App/Tel.pm
 OBJECT = 
 LDFROM = $(OBJECT)
 LINKTYPE = dynamic
@@ -166,8 +167,8 @@ XS_FILES =
 C_FILES  = 
 O_FILES  = 
 H_FILES  = 
-MAN1PODS = bin/tel
-MAN3PODS = 
+MAN1PODS = 
+MAN3PODS = lib/App/Tel.pm
 
 # Where is the Config information that we are using/depend on
 CONFIGDEP = $(PERL_ARCHLIB)$(DFSEP)Config.pm $(PERL_INC)$(DFSEP)config.h
@@ -189,12 +190,15 @@ PERL_ARCHIVE       =
 PERL_ARCHIVE_AFTER = 
 
 
-TO_INST_PM = lib/App/Tel/CiscoColors.pm \
+TO_INST_PM = lib/App/Tel.pm \
+	lib/App/Tel/CiscoColors.pm \
 	lib/App/Tel/CiscoLogColors.pm \
 	lib/App/Tel/CiscoPingRainbowColors.pm \
 	lib/App/Tel/TestColors.pm
 
-PM_TO_BLIB = lib/App/Tel/CiscoColors.pm \
+PM_TO_BLIB = lib/App/Tel.pm \
+	blib/lib/App/Tel.pm \
+	lib/App/Tel/CiscoColors.pm \
 	blib/lib/App/Tel/CiscoColors.pm \
 	lib/App/Tel/CiscoLogColors.pm \
 	blib/lib/App/Tel/CiscoLogColors.pm \
@@ -271,7 +275,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = App-Tel
-DISTVNAME = App-Tel-0.2004
+DISTVNAME = App-Tel-0.2005
 
 
 # --- MakeMaker macro section:
@@ -425,9 +429,9 @@ POD2MAN = $(POD2MAN_EXE)
 
 
 manifypods : pure_all  \
-	bin/tel
-	$(NOECHO) $(POD2MAN) --section=1 --perm_rw=$(PERM_RW) \
-	  bin/tel $(INST_MAN1DIR)/tel.$(MAN1EXT) 
+	lib/App/Tel.pm
+	$(NOECHO) $(POD2MAN) --section=3 --perm_rw=$(PERM_RW) \
+	  lib/App/Tel.pm $(INST_MAN3DIR)/App::Tel.$(MAN3EXT) 
 
 
 
@@ -509,7 +513,7 @@ realclean purge ::  clean realclean_subdirs
 	- $(RM_F) \
 	  $(FIRST_MAKEFILE) $(MAKEFILE_OLD) 
 	- $(RM_RF) \
-	  $(DISTVNAME) MYMETA.yml 
+	  MYMETA.yml $(DISTVNAME) 
 
 
 # --- MakeMaker metafile section:
@@ -814,7 +818,7 @@ testdb_static :: testdb_dynamic
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd :
 	$(NOECHO) $(ECHO) '<SOFTPKG NAME="$(DISTNAME)" VERSION="$(VERSION)">' > $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '    <ABSTRACT></ABSTRACT>' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '    <ABSTRACT>A script for logging into devices</ABSTRACT>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <AUTHOR>Robert Drake, C&lt;&lt; &lt;rdrake at cpan.org&gt; &gt;&gt;</AUTHOR>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <PERLCORE VERSION="5,010,0,0" />' >> $(DISTNAME).ppd
@@ -831,6 +835,7 @@ ppd :
 
 pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', q[$(PM_FILTER)], '\''$(PERM_DIR)'\'')' -- \
+	  lib/App/Tel.pm blib/lib/App/Tel.pm \
 	  lib/App/Tel/CiscoColors.pm blib/lib/App/Tel/CiscoColors.pm \
 	  lib/App/Tel/CiscoLogColors.pm blib/lib/App/Tel/CiscoLogColors.pm \
 	  lib/App/Tel/CiscoPingRainbowColors.pm blib/lib/App/Tel/CiscoPingRainbowColors.pm \

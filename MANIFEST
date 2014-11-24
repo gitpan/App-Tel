@@ -11,6 +11,7 @@ debian/rules
 debian/source/format
 debian/watch
 dottelrc.sample
+lib/App/Tel.pm
 lib/App/Tel/CiscoColors.pm
 lib/App/Tel/CiscoLogColors.pm
 lib/App/Tel/CiscoPingRainbowColors.pm
