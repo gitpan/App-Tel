@@ -4,7 +4,7 @@ author:
   - 'Robert Drake, C<< <rdrake at cpan.org> >>'
 build_requires:
   ExtUtils::MakeMaker: 6.59
-  Test::Most: 0.33
+  Test::Most: 0.31
 configure_requires:
   ExtUtils::MakeMaker: 6.59
 distribution_type: module
@@ -33,4 +33,4 @@ resources:
   homepage: http://search.cpan.org/dist/App-Tel
   license: http://dev.perl.org/licenses/
   repository: git://github.com/rfdrake/tel.git
-version: '0.2006'
+version: '0.2007'
