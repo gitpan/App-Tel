@@ -13,7 +13,7 @@
 
 #     ABSTRACT => q[A script for logging into devices]
 #     AUTHOR => [q[Robert Drake, C<< <rdrake at cpan.org> >>]]
-#     BUILD_REQUIRES => { ExtUtils::MakeMaker=>q[6.59], Test::Most=>q[0.33] }
+#     BUILD_REQUIRES => { Test::Most=>q[0.33], ExtUtils::MakeMaker=>q[6.59] }
 #     CONFIGURE_REQUIRES => {  }
 #     DISTNAME => q[App-Tel]
 #     EXE_FILES => [q[bin/tel], q[bin/mktelrc]]
@@ -21,9 +21,9 @@
 #     MIN_PERL_VERSION => q[5.010]
 #     NAME => q[App::Tel]
 #     NO_META => q[1]
-#     PREREQ_PM => { Expect=>q[0.0], Hash::Merge::Simple=>q[0.0], Test::Most=>q[0.33], IO::Stty=>q[0.0], ExtUtils::MakeMaker=>q[6.59] }
+#     PREREQ_PM => { IO::Stty=>q[0.0], Expect=>q[0.0], Test::Most=>q[0.33], ExtUtils::MakeMaker=>q[6.59], Hash::Merge::Simple=>q[0.0] }
 #     TEST_REQUIRES => {  }
-#     VERSION => q[0.2005]
+#     VERSION => q[0.2006]
 #     VERSION_FROM => q[lib/App/Tel.pm]
 #     dist => { PREOP=>q[$(PERL) -I. "-MModule::Install::Admin" -e "dist_preop(q($(DISTVNAME)))"] }
 #     realclean => { FILES=>q[MYMETA.yml] }
@@ -66,11 +66,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = App::Tel
 NAME_SYM = App_Tel
-VERSION = 0.2005
+VERSION = 0.2006
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_2005
+VERSION_SYM = 0_2006
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.2005
+XS_VERSION = 0.2006
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -168,7 +168,8 @@ C_FILES  =
 O_FILES  = 
 H_FILES  = 
 MAN1PODS = 
-MAN3PODS = lib/App/Tel.pm
+MAN3PODS = lib/App/Tel.pm \
+	lib/App/Tel/ColorObject.pm
 
 # Where is the Config information that we are using/depend on
 CONFIGDEP = $(PERL_ARCHLIB)$(DFSEP)Config.pm $(PERL_INC)$(DFSEP)config.h
@@ -194,7 +195,7 @@ TO_INST_PM = lib/App/Tel.pm \
 	lib/App/Tel/CiscoColors.pm \
 	lib/App/Tel/CiscoLogColors.pm \
 	lib/App/Tel/CiscoPingRainbowColors.pm \
-	lib/App/Tel/TestColors.pm
+	lib/App/Tel/ColorObject.pm
 
 PM_TO_BLIB = lib/App/Tel.pm \
 	blib/lib/App/Tel.pm \
@@ -204,8 +205,8 @@ PM_TO_BLIB = lib/App/Tel.pm \
 	blib/lib/App/Tel/CiscoLogColors.pm \
 	lib/App/Tel/CiscoPingRainbowColors.pm \
 	blib/lib/App/Tel/CiscoPingRainbowColors.pm \
-	lib/App/Tel/TestColors.pm \
-	blib/lib/App/Tel/TestColors.pm
+	lib/App/Tel/ColorObject.pm \
+	blib/lib/App/Tel/ColorObject.pm
 
 
 # --- MakeMaker platform_constants section:
@@ -275,7 +276,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = App-Tel
-DISTVNAME = App-Tel-0.2005
+DISTVNAME = App-Tel-0.2006
 
 
 # --- MakeMaker macro section:
@@ -429,9 +430,11 @@ POD2MAN = $(POD2MAN_EXE)
 
 
 manifypods : pure_all  \
-	lib/App/Tel.pm
+	lib/App/Tel.pm \
+	lib/App/Tel/ColorObject.pm
 	$(NOECHO) $(POD2MAN) --section=3 --perm_rw=$(PERM_RW) \
-	  lib/App/Tel.pm $(INST_MAN3DIR)/App::Tel.$(MAN3EXT) 
+	  lib/App/Tel.pm $(INST_MAN3DIR)/App::Tel.$(MAN3EXT) \
+	  lib/App/Tel/ColorObject.pm $(INST_MAN3DIR)/App::Tel::ColorObject.$(MAN3EXT) 
 
 
 
@@ -443,24 +446,24 @@ manifypods : pure_all  \
 
 EXE_FILES = bin/tel bin/mktelrc
 
-pure_all :: $(INST_SCRIPT)/mktelrc $(INST_SCRIPT)/tel
+pure_all :: $(INST_SCRIPT)/tel $(INST_SCRIPT)/mktelrc
 	$(NOECHO) $(NOOP)
 
 realclean ::
 	$(RM_F) \
-	  $(INST_SCRIPT)/mktelrc $(INST_SCRIPT)/tel 
-
-$(INST_SCRIPT)/mktelrc : bin/mktelrc $(FIRST_MAKEFILE) $(INST_SCRIPT)$(DFSEP).exists $(INST_BIN)$(DFSEP).exists
-	$(NOECHO) $(RM_F) $(INST_SCRIPT)/mktelrc
-	$(CP) bin/mktelrc $(INST_SCRIPT)/mktelrc
-	$(FIXIN) $(INST_SCRIPT)/mktelrc
-	-$(NOECHO) $(CHMOD) $(PERM_RWX) $(INST_SCRIPT)/mktelrc
+	  $(INST_SCRIPT)/tel $(INST_SCRIPT)/mktelrc 
 
 $(INST_SCRIPT)/tel : bin/tel $(FIRST_MAKEFILE) $(INST_SCRIPT)$(DFSEP).exists $(INST_BIN)$(DFSEP).exists
 	$(NOECHO) $(RM_F) $(INST_SCRIPT)/tel
 	$(CP) bin/tel $(INST_SCRIPT)/tel
 	$(FIXIN) $(INST_SCRIPT)/tel
 	-$(NOECHO) $(CHMOD) $(PERM_RWX) $(INST_SCRIPT)/tel
+
+$(INST_SCRIPT)/mktelrc : bin/mktelrc $(FIRST_MAKEFILE) $(INST_SCRIPT)$(DFSEP).exists $(INST_BIN)$(DFSEP).exists
+	$(NOECHO) $(RM_F) $(INST_SCRIPT)/mktelrc
+	$(CP) bin/mktelrc $(INST_SCRIPT)/mktelrc
+	$(FIXIN) $(INST_SCRIPT)/mktelrc
+	-$(NOECHO) $(CHMOD) $(PERM_RWX) $(INST_SCRIPT)/mktelrc
 
 
 
@@ -513,7 +516,7 @@ realclean purge ::  clean realclean_subdirs
 	- $(RM_F) \
 	  $(FIRST_MAKEFILE) $(MAKEFILE_OLD) 
 	- $(RM_RF) \
-	  MYMETA.yml $(DISTVNAME) 
+	  $(DISTVNAME) MYMETA.yml 
 
 
 # --- MakeMaker metafile section:
@@ -839,7 +842,7 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	  lib/App/Tel/CiscoColors.pm blib/lib/App/Tel/CiscoColors.pm \
 	  lib/App/Tel/CiscoLogColors.pm blib/lib/App/Tel/CiscoLogColors.pm \
 	  lib/App/Tel/CiscoPingRainbowColors.pm blib/lib/App/Tel/CiscoPingRainbowColors.pm \
-	  lib/App/Tel/TestColors.pm blib/lib/App/Tel/TestColors.pm 
+	  lib/App/Tel/ColorObject.pm blib/lib/App/Tel/ColorObject.pm 
 	$(NOECHO) $(TOUCH) pm_to_blib
 
 
