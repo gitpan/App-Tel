@@ -1,4 +1,3 @@
-.gitignore
 bin/mktelrc
 bin/tel
 COMMANDS.md
@@ -28,13 +27,9 @@ lib/App/Tel/CiscoColors.pm
 lib/App/Tel/CiscoLogColors.pm
 lib/App/Tel/CiscoPingRainbowColors.pm
 lib/App/Tel/ColorObject.pm
-lib/App/Tel/TestColors.pm
-Makefile
 Makefile.PL
 MANIFEST			This list of files
 META.yml
-MYMETA.json
-MYMETA.yml
 README.md
 t/00-load.t
 t/01_initial_t.t
@@ -45,5 +40,4 @@ t/02-syntax.t
 t/03-fake-a-router.t
 t/10-test-colorize.t
 t/dottelrc.testing
-t/fake_routers/login_prompt
 t/fake_routers/loopback
