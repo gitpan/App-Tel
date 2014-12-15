@@ -23,6 +23,7 @@ recommends:
   File::KeePass: 0
   Passwd::Keyring::Auto: 0
   Term::ANSIColor: 0
+  Term::ReadKey: 0
 requires:
   Expect: '0.0'
   Hash::Merge::Simple: '0.0'
@@ -33,4 +34,4 @@ resources:
   homepage: http://search.cpan.org/dist/App-Tel
   license: http://dev.perl.org/licenses/
   repository: git://github.com/rfdrake/tel.git
-version: '0.2009'
+version: '0.201001'

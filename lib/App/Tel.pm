@@ -6,7 +6,7 @@ App::Tel - A script for logging into devices
 
 =head1 VERSION
 
-0.2009
+0.2010_01
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ use Hash::Merge::Simple qw (merge);
 use Module::Load;
 use v5.10;
 
-our $VERSION = eval '0.2009';
+our $VERSION = eval '0.2010_01';
 
 # For reasons related to state I needed to make $winch_it global
 # because it needs to be written to inside signals.
@@ -60,6 +60,7 @@ sub new {
 
     my $self = {
         'stdin'         => Expect->exp_init($infile),
+        'stdin_fileno'  => $infile->fileno,
         'connected'     => 0,
         'enabled'       => 0,
         'title_stack'   => 0,
@@ -365,6 +366,16 @@ sub profile {
     return $profile;
 }
 
+sub _stty_rows {
+    my $new_rows = shift;
+    eval {
+        use Term::ReadKey;
+        my ($columns, $rows, $xpix, $ypix) = GetTerminalSize(\*STDOUT);
+        SetTerminalSize($columns, $new_rows, $xpix, $ypix, \*STDOUT);
+    };
+
+    warn $@ if ($@);
+}
 
 sub _input_password {
     my $prompt = shift;
@@ -510,8 +521,13 @@ sub session {
 
 sub winch {
     my $session = shift->{'session'};
-    $session->slave->clone_winsize_from(\*STDIN);
-    kill WINCH => $session->pid if $session->pid;
+    # these need to be wrapped in eval or you get Given filehandle is not a
+    # tty in clone_winsize_from if you call winch() under a scripted
+    # environment like rancid (or just under par, or anywhere there is no pty)
+    eval {
+        $session->slave->clone_winsize_from(\*STDIN);
+        kill WINCH => $session->pid if $session->pid;
+    };
     $winch_it=0;
     $SIG{WINCH} = \&winch_handler;
 }
@@ -605,9 +621,6 @@ sub login {
 
     METHOD: for (@{$self->methods}) {
         my $allied_shit=0;
-
-        # I think there used to be something here to tear down and reestablish
-        # sessions if needed.  That probably should still be here.
 
         my $p = $self->{port};
 
@@ -846,7 +859,7 @@ sub interconnect {
 				);
 
                 # don't bother trying to colorize input from the user
-                if (${*$read_handle}{exp_Pty_Handle} ne 'STDIN') {
+                if ($read_handle->fileno() != $self->{stdin_fileno}) {
                     foreach my $color (@{$self->{colors}}) {
                         ${*$read_handle}{exp_Pty_Buffer} = $color->colorize(${*$read_handle}{exp_Pty_Buffer});
                     }
@@ -943,7 +956,7 @@ sub interconnect {
 
 =head2 control_loop
 
-    $self->control_loop('commands', 'another command');
+    $self->control_loop([ 'commands', 'another command' ]);
 
 This is where control should be passed once the session is logged in.  This
 handles CLI commands passed via the -c option, or scripts executed with the -x
@@ -964,6 +977,7 @@ sub control_loop {
     my $profile = $self->profile;
     my $opts = $self->{opts};
     my $prompt = $profile->{prompt};
+    my $pagercmd = $profile->{pagercmd};
 
     $self->winch();
 
@@ -976,16 +990,21 @@ sub control_loop {
 
     if (@args) {
         $self->expect(10,'-re',$prompt);
-        # this is cisco specific and needs to be abstracted
-        $self->send("term len 0\r");
-        $self->expect(10,'-re',$prompt);
-        foreach my $arg (@$autocmds) {
+        if (ref($pagercmd) eq 'CODE') {
+            $pagercmd->();
+            undef $pagercmd;
+        } else {
+            $pagercmd ||= 'term len 0';
+            $self->send("$pagercmd\r");
+            $self->expect(10,'-re',$prompt);
+        }
+        foreach my $arg (@args) {
             $self->send("$arg\r");
             $self->expect(10,'-re',$prompt);
         }
         $self->send($profile->{logoutcmd} ."\r");
     } else {
-        foreach my $arg (@_) {
+        foreach my $arg (@$autocmds) {
             $self->send("$arg\r");
             $self->expect(10,'-re',$prompt);
         }
