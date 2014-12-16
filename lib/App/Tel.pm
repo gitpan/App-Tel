@@ -6,7 +6,7 @@ App::Tel - A script for logging into devices
 
 =head1 VERSION
 
-0.2010_01
+0.2010_02
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ use Hash::Merge::Simple qw (merge);
 use Module::Load;
 use v5.10;
 
-our $VERSION = eval '0.2010_01';
+our $VERSION = eval '0.2010_02';
 
 # For reasons related to state I needed to make $winch_it global
 # because it needs to be written to inside signals.
@@ -87,6 +87,7 @@ sub disconnect {
     my $self = shift;
     my $hard = shift;
     $self->{profile} = {};
+    $self->{timeout} = $self->{opts}->{t} ? $self->{opts}->{t} : 90;
     $self->{banners} = undef;
     $self->{methods} = ();
     $self->connected(0);
@@ -369,7 +370,7 @@ sub profile {
 sub _stty_rows {
     my $new_rows = shift;
     eval {
-        use Term::ReadKey;
+        Module::Load::load Term::ReadKey;
         my ($columns, $rows, $xpix, $ypix) = GetTerminalSize(\*STDOUT);
         SetTerminalSize($columns, $new_rows, $xpix, $ypix, \*STDOUT);
     };
