@@ -34,4 +34,4 @@ resources:
   homepage: http://search.cpan.org/dist/App-Tel
   license: http://dev.perl.org/licenses/
   repository: git://github.com/rfdrake/tel.git
-version: '0.201002'
+version: '0.201004'

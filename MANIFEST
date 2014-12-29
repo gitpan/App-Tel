@@ -1,4 +1,4 @@
-App-Tel-0.201001.tar.gz
+App-Tel-0.201002.tar.gz
 bin/mktelrc
 bin/tel
 COMMANDS.md
@@ -42,3 +42,4 @@ t/03-fake-a-router.t
 t/10-test-colorize.t
 t/dottelrc.testing
 t/fake_routers/loopback
+tel_script.spec
